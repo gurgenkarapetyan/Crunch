@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "CPlayerController.generated.h"
 
+class ACPlayerCharacter;
 /**
  * 
  */
@@ -14,4 +15,14 @@ class CRUNCH_API ACPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 	
+public:
+	// only called on the server
+	virtual void OnPossess(APawn* NewPawn) override;
+	
+	// only called on the client, also on the listening server
+	virtual void AcknowledgePossession(APawn* NewPawn) override;
+	
+private:
+	UPROPERTY()
+	ACPlayerCharacter* CPlayerCharacter;
 };
