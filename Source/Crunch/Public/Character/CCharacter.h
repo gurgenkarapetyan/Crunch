@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 #include "CCharacter.generated.h"
 
+class UWidgetComponent;
 class UCAttributeSet;
 class UCAbilitySystemComponent;
 
@@ -24,12 +25,20 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
-	/** Gameplay Ability */
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
+	virtual void PossessedBy(AController* NewController) override;
+	
 protected:
 	virtual void BeginPlay() override;
+
+private:
+	bool IsLocallyControlledByPlayer() const;
+	
+public:
+	/*****************************************************************************/
+	/**								Gameplay Ability							 */
+	/*************************************************************************** */
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	
 private:
 	UPROPERTY(VisibleDefaultsOnly, Category = "Gameplay Ability")
@@ -37,4 +46,23 @@ private:
 	
 	UPROPERTY()
 	UCAttributeSet* CAttributeSet;
+	
+	/*****************************************************************************/
+	/**								UI											 */
+	/*************************************************************************** */
+private:
+	void ConfigureOverHeadStatusWidget();
+	
+	void UpdateHeadGaugeVisibility() const;
+	
+	UPROPERTY(VisibleDefaultsOnly, Category = "UI")
+	UWidgetComponent* OverHeadWidgetComponent;
+	
+	FTimerHandle HeadStatGaugeVisibilityUpdateTimerHandle;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	float HeadStatGaugeVisibilityCheckUpdateGap = 1.f;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	float HeadStatGaugeVisibilityRangeSquared = 10000000.f;
 };
