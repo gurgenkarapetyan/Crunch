@@ -24,6 +24,7 @@ void ACCharacter::ServerSideInit()
 {
 	CAbilitySystemComponent->InitAbilityActorInfo(this, this);
 	CAbilitySystemComponent->ApplyInitialEffects();
+	CAbilitySystemComponent->GiveInitialAbilities();
 }
 
 void ACCharacter::ClientSideInit()
@@ -70,7 +71,7 @@ void ACCharacter::UpdateHeadGaugeVisibility() const
 {
 	if (const APawn* LocalPlayerPawn = UGameplayStatics::GetPlayerPawn(this, 0))
 	{
-		float DistSquared = FVector::DistSquared(GetActorLocation(), LocalPlayerPawn->GetActorLocation());
+		const float DistSquared = FVector::DistSquared(GetActorLocation(), LocalPlayerPawn->GetActorLocation());
 		OverHeadWidgetComponent->SetHiddenInGame(DistSquared > HeadStatGaugeVisibilityRangeSquared);
 	}
 }
