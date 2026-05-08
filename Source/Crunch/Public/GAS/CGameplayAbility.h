@@ -6,9 +6,6 @@
 #include "Abilities/GameplayAbility.h"
 #include "CGameplayAbility.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class CRUNCH_API UCGameplayAbility : public UGameplayAbility
 {

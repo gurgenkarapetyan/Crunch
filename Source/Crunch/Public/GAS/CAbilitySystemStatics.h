@@ -7,14 +7,17 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "CAbilitySystemStatics.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class CRUNCH_API UCAbilitySystemStatics : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 	
 public:
+
+	/**
+	 * @brief Returns the gameplay tag used by basic attack abilities.
+	 * @return Basic attack ability gameplay tag.
+	 */
 	static FGameplayTag GetBasicAttackAbilityTag();
 };
