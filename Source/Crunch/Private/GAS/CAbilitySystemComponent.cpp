@@ -24,13 +24,13 @@ void UCAbilitySystemComponent::GiveInitialAbilities()
 		return;
 	}
 	
-	for (const TSubclassOf<UGameplayAbility>& AbilityClass : Abilities)
+	for (const TPair<ECAbilityInputID, TSubclassOf<UGameplayAbility>>& AbilityPair : Abilities)
 	{
-		GiveAbility(FGameplayAbilitySpec(AbilityClass, 0, -1, nullptr));
+		GiveAbility(FGameplayAbilitySpec(AbilityPair.Value, 0, static_cast<int32>(AbilityPair.Key), nullptr));
 	}
 	
-	for (const TSubclassOf<UGameplayAbility>& BasicAbilityClass : BasicAbilities)
+	for (const TPair<ECAbilityInputID, TSubclassOf<UGameplayAbility>>& BasicAbilityPair : BasicAbilities)
 	{
-		GiveAbility(FGameplayAbilitySpec(BasicAbilityClass, 0, -1, nullptr));
+		GiveAbility(FGameplayAbilitySpec(BasicAbilityPair.Value, 1, static_cast<int32>(BasicAbilityPair.Key), nullptr));
 	}
 }

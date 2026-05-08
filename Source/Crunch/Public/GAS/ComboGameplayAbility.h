@@ -15,6 +15,8 @@ class CRUNCH_API UComboGameplayAbility : public UCGameplayAbility
 	GENERATED_BODY()
 	
 public:
+	UComboGameplayAbility();
+	
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 	
 private:

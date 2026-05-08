@@ -2,8 +2,14 @@
 
 
 #include "GAS/ComboGameplayAbility.h"
-
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
+#include "Gas/CAbilitySystemStatics.h"
+
+UComboGameplayAbility::UComboGameplayAbility()
+{
+	AbilityTags.AddTag(UCAbilitySystemStatics::GetBasicAttackAbilityTag());
+	BlockAbilitiesWithTag.AddTag(UCAbilitySystemStatics::GetBasicAttackAbilityTag());
+}
 
 void UComboGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
                                             const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
