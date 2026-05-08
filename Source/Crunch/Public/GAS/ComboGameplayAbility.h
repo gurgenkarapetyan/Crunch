@@ -13,7 +13,6 @@ class CRUNCH_API UComboGameplayAbility : public UCGameplayAbility
 	GENERATED_BODY()
 	
 public:
-
 	/**
 	 * @brief Sets up ability tags and blocking tags for the combo ability.
 	 */
@@ -40,22 +39,40 @@ public:
 	 * @brief Returns the gameplay event tag used to listen for combo section changes.
 	 * @return Combo change gameplay event tag.
 	 */
-	static FGameplayTag GetComboChangedEventTag();
+	static FGameplayTag GetComboChangedEventTag() { return FGameplayTag::RequestGameplayTag("ability.combo.change"); }
 
 	/**
 	 * @brief Returns the gameplay event tag used to clear the next combo section.
 	 * @return Combo change end gameplay event tag.
 	 */
-	static FGameplayTag GetComboChangedEventEndTag();
+	static FGameplayTag GetComboChangedEventEndTag() { return FGameplayTag::RequestGameplayTag("ability.combo.change.end"); };
+	
+	/**
+	 * @brief Returns the gameplay event tag used to trigger combo damage processing.
+	 * @return Combo damage gameplay event tag.
+	 */
+	static FGameplayTag GetComboTargetEventTag() { return FGameplayTag::RequestGameplayTag("ability.combo.damage"); };
 	
 private:
 	/**
 	 * @brief Handles received combo change gameplay events.
+	 * 
 	 * Updates the next combo section name from the received event tag, or clears it when the combo end tag is received.
+	 * 
 	 * @param Data Gameplay event data received from the ability task.
 	 */
 	UFUNCTION()
 	void ComboChangeEventReceived(FGameplayEventData Data);
+	
+	/**
+	 * @brief Handles combo damage gameplay events.
+	 * 
+	 * Called when combo target gameplay event data is received from the ability task.
+	 * 
+	 * @param Data Gameplay event data containing combo target information.
+	 */
+	UFUNCTION()
+	void DoDamage(FGameplayEventData Data);
 	
 	/**
 	 * @brief Creates and activates a task that waits for combo input presses.
@@ -64,7 +81,9 @@ private:
 
 	/**
 	 * @brief Called when combo input is pressed while the ability is active.
+	 * 
 	 * Re-registers the input wait task and attempts to commit the next combo section.
+	 * 
 	 * @param TimeWaited Time elapsed before the input was received.
 	 */
 	UFUNCTION()
@@ -75,7 +94,15 @@ private:
 	 */
 	void TryCommitCombo();
 	
+	TSubclassOf<UGameplayEffect> GetGameplayEffectForCurrentCombo() const; 
+	
 private:
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Effect")
+	TMap<FName, TSubclassOf<UGameplayEffect>> DamageEffectMap;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Effect")
+	TSubclassOf<UGameplayEffect> DefaultDamageEffect;
+	
 	/** Animation montage played when this combo ability is activated. */
 	UPROPERTY(EditDefaultsOnly, Category = "Animation")
 	UAnimMontage* ComboMontage;

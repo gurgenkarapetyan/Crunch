@@ -2,6 +2,8 @@
 
 
 #include "GAS/ComboGameplayAbility.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "Abilities/Tasks/AbilityTask_WaitInputPress.h"
@@ -46,6 +48,13 @@ void UComboGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHandle Han
 		WaitComboChangeEventTask->ReadyForActivation();
 	}
 	
+	if (K2_HasAuthority())
+	{
+		UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, GetComboTargetEventTag());
+		WaitGameplayEventTask->EventReceived.AddDynamic(this, &UComboGameplayAbility::DoDamage);
+		WaitGameplayEventTask->ReadyForActivation();
+	}
+	
 	SetupWaitComboInputPress();
 }
 
@@ -61,6 +70,42 @@ void UComboGameplayAbility::ComboChangeEventReceived(FGameplayEventData Data)
 	TArray<FName> TagNames;
 	UGameplayTagsManager::Get().SplitGameplayTagFName(EventTag, TagNames);
 	NextComboName = TagNames.Last();
+}
+
+void UComboGameplayAbility::DoDamage(FGameplayEventData Data)
+{
+	TArray<FHitResult> HitResults = GetHitResultsFromSweepLocationTargetData(Data.TargetData, 30.f, true, true);
+	
+	for (const FHitResult& HitResult : HitResults)
+	{
+		const TSubclassOf<UGameplayEffect> GameplayEffect = GetGameplayEffectForCurrentCombo();
+		const FGameplayEffectSpecHandle EffectSpecHandle = MakeOutgoingGameplayEffectSpec(
+			GameplayEffect, 
+			GetAbilityLevel(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo())
+		);
+		
+		ApplyGameplayEffectSpecToTarget(
+			GetCurrentAbilitySpecHandle(), 
+			CurrentActorInfo, 
+			CurrentActivationInfo, 
+			EffectSpecHandle, 
+			UAbilitySystemBlueprintLibrary::AbilityTargetDataFromActor(HitResult.GetActor())
+		);
+	}
+}
+
+TSubclassOf<UGameplayEffect> UComboGameplayAbility::GetGameplayEffectForCurrentCombo() const
+{
+	if (const UAnimInstance* OwnerAnimIntance = GetOwnerAnimInstance())
+	{
+		const FName CurrentSectionName = OwnerAnimIntance->Montage_GetCurrentSection(ComboMontage);
+		if (const TSubclassOf<UGameplayEffect>* FoundEffectPtr = DamageEffectMap.Find(CurrentSectionName))
+		{
+			return *FoundEffectPtr;
+		}
+	}
+	
+	return DefaultDamageEffect;
 }
 
 void UComboGameplayAbility::SetupWaitComboInputPress()
@@ -90,14 +135,4 @@ void UComboGameplayAbility::TryCommitCombo()
 	}
 	
 	OwnerAnimIntance->Montage_SetNextSection(OwnerAnimIntance->Montage_GetCurrentSection(ComboMontage), NextComboName, ComboMontage);
-}
-
-FGameplayTag UComboGameplayAbility::GetComboChangedEventTag()
-{
-	return FGameplayTag::RequestGameplayTag("ability.combo.change");
-}
-
-FGameplayTag UComboGameplayAbility::GetComboChangedEventEndTag()
-{
-	return FGameplayTag::RequestGameplayTag("ability.combo.change.end");
 }

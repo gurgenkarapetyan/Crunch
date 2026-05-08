@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Animations/AN_SendGameplayEvent.h"
+#include "Animations/AnimNotifies/AN_SendGameplayEvent.h"
 #include "GameplayTagsManager.h"
 #include "AbilitySystemBlueprintLibrary.h"
 
