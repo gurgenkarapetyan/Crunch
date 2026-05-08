@@ -74,7 +74,7 @@ void UComboGameplayAbility::ComboChangeEventReceived(FGameplayEventData Data)
 
 void UComboGameplayAbility::DoDamage(FGameplayEventData Data)
 {
-	TArray<FHitResult> HitResults = GetHitResultsFromSweepLocationTargetData(Data.TargetData, 30.f, true, true);
+	TArray<FHitResult> HitResults = GetHitResultsFromSweepLocationTargetData(Data.TargetData, TargetSweepSphereRadius, false, true);
 	
 	for (const FHitResult& HitResult : HitResults)
 	{
@@ -83,6 +83,11 @@ void UComboGameplayAbility::DoDamage(FGameplayEventData Data)
 			GameplayEffect, 
 			GetAbilityLevel(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo())
 		);
+		
+		FGameplayEffectContextHandle EffectContext = MakeEffectContext(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo());
+		EffectContext.AddHitResult(HitResult);
+		
+		EffectSpecHandle.Data->SetContext(EffectContext);
 		
 		ApplyGameplayEffectSpecToTarget(
 			GetCurrentAbilitySpecHandle(), 

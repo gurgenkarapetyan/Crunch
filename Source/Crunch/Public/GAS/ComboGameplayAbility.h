@@ -94,14 +94,28 @@ private:
 	 */
 	void TryCommitCombo();
 	
+	/**
+	 * @brief Returns the gameplay effect associated with the currently active combo montage section.
+	 *
+	 * Uses the current montage section name to look up a gameplay effect inside the damage effect map.
+	 * Falls back to the default damage effect if no section-specific effect is found.
+	 *
+	 * @return Gameplay effect class used for the current combo section.
+	 */
 	TSubclassOf<UGameplayEffect> GetGameplayEffectForCurrentCombo() const; 
 	
 private:
+	/** Gameplay effects mapped to specific combo montage sections. */
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Effect")
 	TMap<FName, TSubclassOf<UGameplayEffect>> DamageEffectMap;
 	
+	/** Fallback gameplay effect applied when no section-specific effect exists. */
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Effect")
 	TSubclassOf<UGameplayEffect> DefaultDamageEffect;
+	
+	/** Radius used for sphere sweep target detection traces. */
+	UPROPERTY(EditDefaultsOnly, Category = "Targeting")
+	float TargetSweepSphereRadius = 30.f;
 	
 	/** Animation montage played when this combo ability is activated. */
 	UPROPERTY(EditDefaultsOnly, Category = "Animation")
