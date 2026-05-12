@@ -5,7 +5,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
-#include "GAS/CAttributeSet.h"
+#include "GAS/Attributes/CAttributeSet.h"
 #include "Widgets/ValueGauge.h"
 
 void UGameplayWidget::NativeConstruct()

@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "GAS/CGameplayAbility.h"
+#include "GAS/Abilities/CGameplayAbility.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 UAnimInstance* UCGameplayAbility::GetOwnerAnimInstance() const

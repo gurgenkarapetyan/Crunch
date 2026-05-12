@@ -2,7 +2,7 @@
 
 
 #include "Widgets/OverHeadStatsGauge.h"
-#include "GAS/CAttributeSet.h"
+#include "GAS/Attributes/CAttributeSet.h"
 #include "Widgets/ValueGauge.h"
 
 void UOverHeadStatsGauge::ConfigureWithASC(UAbilitySystemComponent* AbilitySystemComponent)

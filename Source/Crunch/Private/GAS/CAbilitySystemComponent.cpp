@@ -3,7 +3,7 @@
 
 #include "GAS/CAbilitySystemComponent.h"
 
-#include "GAS/CAttributeSet.h"
+#include "GAS/Attributes/CAttributeSet.h"
 
 UCAbilitySystemComponent::UCAbilitySystemComponent()
 {

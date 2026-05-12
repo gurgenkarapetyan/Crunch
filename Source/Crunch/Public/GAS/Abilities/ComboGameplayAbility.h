@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GAS/CGameplayAbility.h"
+#include "GAS/Abilities/CGameplayAbility.h"
 #include "ComboGameplayAbility.generated.h"
 
 
