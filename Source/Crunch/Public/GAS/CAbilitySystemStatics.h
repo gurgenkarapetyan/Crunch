@@ -20,4 +20,10 @@ public:
 	 * @return Basic attack ability gameplay tag.
 	 */
 	static FGameplayTag GetBasicAttackAbilityTag();
+
+	/**
+	 * @brief Return the gameplay tag used to detect character death
+	 * @return dead ability gameplay tag.
+	 */
+	static FGameplayTag GetDeadStatTag();
 };

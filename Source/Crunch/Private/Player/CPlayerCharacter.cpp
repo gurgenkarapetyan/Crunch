@@ -57,7 +57,7 @@ void ACPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 void ACPlayerCharacter::HandleLookInput(const FInputActionValue& InputActionValue)
 {
-	FVector2D InputValue = InputActionValue.Get<FVector2D>();
+	const FVector2D InputValue = InputActionValue.Get<FVector2D>();
 	
 	AddControllerPitchInput(-InputValue.Y);
 	AddControllerYawInput(InputValue.X);
@@ -96,4 +96,20 @@ FVector ACPlayerCharacter::GetLookForwardDirection() const
 FVector ACPlayerCharacter::GetMoveForwardDirection() const
 {
 	return FVector::CrossProduct(GetLookRightDirection(), FVector::UpVector);
+}
+
+void ACPlayerCharacter::OnDead()
+{
+	if (APlayerController* PlayerController = GetController<APlayerController>())
+	{
+		DisableInput(PlayerController);
+	}
+}
+
+void ACPlayerCharacter::OnRespawn()
+{
+	if (APlayerController* PlayerController = GetController<APlayerController>())
+	{
+		EnableInput(PlayerController);
+	}
 }

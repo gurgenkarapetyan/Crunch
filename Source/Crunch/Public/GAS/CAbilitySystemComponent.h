@@ -12,9 +12,10 @@ UCLASS()
 class CRUNCH_API UCAbilitySystemComponent : public UAbilitySystemComponent
 {
 	GENERATED_BODY()
-	
-public:
 
+public:
+	UCAbilitySystemComponent();
+	
 	/**
 	 * @brief Applies all configured initial gameplay effects to this Ability System Component.
 	 *
@@ -29,12 +30,44 @@ public:
 	 */
 	void GiveInitialAbilities();
 	
+	/**
+	 * @brief Applies the configured full stat restoration gameplay effect.
+	 *
+	 * Only executes on the authority.
+	 */
+	void ApplyFullStatEffect();
+	
 private:
-
+	/**
+	 * @brief Applies a gameplay effect to the owning actor on the authority.
+	 *
+	 * @param GameplayEffect Gameplay effect class to apply.
+	 * @param Level Gameplay effect level.
+	 */
+	void AuthApplyGameplayEffect(TSubclassOf<UGameplayEffect> GameplayEffect, int Level = 1);
+	
+	/**
+	 * @brief Called when the Health attribute value changes.
+	 *
+	 * Applies the death effect when health reaches zero.
+	 *
+	 * @param ChangeData Health attribute change data.
+	 */
+	void HealthUpdated(const FOnAttributeChangeData& ChangeData);
+	
+private:
 	/** Gameplay effects applied when the character is initialized. */
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Effects")
 	TArray<TSubclassOf<UGameplayEffect>> InitalEffects;
 
+	/** Gameplay effect applied when the owner dies. */
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Effects")
+	TSubclassOf<UGameplayEffect> DeathEffect;
+	
+	/** Gameplay effect used to fully restore the owner's stats. */
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Effects")
+	TSubclassOf<UGameplayEffect> FullStatEffect;
+	
 	/** Input-bound gameplay abilities granted during initialization. */
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Abilities")
 	TMap<ECAbilityInputID, TSubclassOf<UGameplayAbility>> Abilities;

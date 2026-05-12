@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 #include "CCharacter.generated.h"
 
+struct FGameplayTag;
 class UWidgetComponent;
 class UCAttributeSet;
 class UCAbilitySystemComponent;
@@ -17,10 +18,6 @@ class CRUNCH_API ACCharacter : public ACharacter, public IAbilitySystemInterface
 	GENERATED_BODY()
 
 public:
-
-	/**
-	 * @brief Sets up character components, collision, ability system, attributes, and overhead UI.
-	 */
 	ACCharacter();
 
 	/**
@@ -59,7 +56,6 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-
 	/**
 	 * @brief Checks whether this character is controlled by a local player controller.
 	 * @return True if the character is locally controlled by a player.
@@ -67,7 +63,6 @@ private:
 	bool IsLocallyControlledByPlayer() const;
 	
 public:
-
 	/*****************************************************************************/
 	/**								Gameplay Ability							 */
 	/*************************************************************************** */
@@ -78,8 +73,66 @@ public:
 	 */
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	
-private:
+	/**
+	 * @brief Called when the character enters the dead state.
+	 *
+	 * Intended to be overridden by child classes for custom death behavior.
+	 */
+	virtual void OnDead();
 
+	/**
+	 * @brief Called when the character respawns.
+	 *
+	 * Intended to be overridden by child classes for custom respawn behavior.
+	 */
+	virtual void OnRespawn();
+	
+private:
+	/**
+	 * @brief Registers gameplay tag change delegates on the Ability System Component.
+	 */
+	void BindGASChangeDelegate();
+	
+	/**
+	 * @brief Called when the dead gameplay tag count changes.
+	 *
+	 * Starts the death sequence when the tag is added and respawns when removed.
+	 *
+	 * @param Tag Gameplay tag that changed.
+	 * @param NewCount New active tag count.
+	 */
+	void DeathTagUpdated(const FGameplayTag Tag, int32 NewCount);
+	
+	/**
+	 * @brief Starts the full death sequence.
+	 *
+	 * Disables movement, collision, status UI, and plays the death animation.
+	 */
+	void StartDeathSequence();
+	
+	/**
+	 * @brief Respawns the character and restores gameplay state.
+	 */
+	void Respawn();
+	
+	/**
+	 * @brief Plays the configured death montage.
+	 */
+	void PlayDeathAnimation();
+	
+	/**
+	 * @brief Called when the death montage sequence has finished.
+	 */
+	void DeathMontageFinished() const;
+	
+	/**
+	 * @brief Enables or disables ragdoll simulation on the character mesh.
+	 *
+	 * @param bIsEnabled True to enable ragdoll simulation.
+	 */
+	void SetRagdollEnabled(const bool bIsEnabled) const;
+
+private:
 	/** Ability System Component used to manage abilities, effects, tags, and gameplay cues. */
 	UPROPERTY(VisibleDefaultsOnly, Category = "Gameplay Ability")
 	UCAbilitySystemComponent* CAbilitySystemComponent;
@@ -87,6 +140,24 @@ private:
 	/** Attribute Set containing this character's gameplay attributes. */
 	UPROPERTY()
 	UCAttributeSet* CAttributeSet;
+	
+	/** Death montage played when the character dies. */
+	UPROPERTY(EditDefaultsOnly, Category = "Death")
+	UAnimMontage* DeathMontage = nullptr;
+	
+	/**
+	 * @brief Time offset applied to the death montage duration before ragdoll activation.
+	 *
+	 * Negative values trigger ragdoll before the montage fully finishes.
+	 */
+	UPROPERTY(EditDefaultsOnly, Category = "Death")
+	float DeathMontageFinishTimeShift = -0.8f;
+	
+	/** Timer handle used to trigger post-death montage logic. */
+	FTimerHandle DeathMontageTimerHandle;
+	
+	/** Cached mesh relative transform used to restore mesh position after ragdoll. */
+	FTransform MeshRelativeTransform;
 	
 	/*****************************************************************************/
 	/**								     UI								         */
@@ -103,6 +174,13 @@ private:
 	 */
 	void UpdateHeadGaugeVisibility() const;
 
+	/**
+	 * @brief Enables or disables the overhead status gauge widget.
+	 *
+	 * @param bIsEnabled True to enable the status gauge.
+	 */
+	void SetStatusGaugeEnabled(const bool bIsEnabled); 
+	
 	/** Widget component used to display overhead stats above the character. */
 	UPROPERTY(VisibleDefaultsOnly, Category = "UI")
 	UWidgetComponent* OverHeadWidgetComponent;

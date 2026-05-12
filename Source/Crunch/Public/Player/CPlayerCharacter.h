@@ -7,6 +7,7 @@
 #include "CPlayerCharacter.generated.h"
 
 enum class ECAbilityInputID : uint8;
+
 struct FInputActionValue;
 class UInputAction;
 class UInputMappingContext;
@@ -30,6 +31,20 @@ public:
 	 */
 	virtual void PawnClientRestart() override;
 
+	
+private:
+	/** Spring arm used to position the player camera. */
+	UPROPERTY(VisibleDefaultsOnly, Category = "View")
+	USpringArmComponent* CameraBoom;
+
+	/** Camera used as the player view. */
+	UPROPERTY(VisibleDefaultsOnly, Category = "View")
+	UCameraComponent* ViewCamera;
+	
+	/*****************************************************************************/
+	/**									Input									 */
+	/*************************************************************************** */
+public:
 	/**
 	 * @brief Binds player input actions for movement, looking, jumping, and gameplay abilities.
 	 * @param PlayerInputComponent Input component used to bind actions.
@@ -76,19 +91,6 @@ private:
 	FVector GetMoveForwardDirection() const;
 	
 private:
-
-	/** Spring arm used to position the player camera. */
-	UPROPERTY(VisibleDefaultsOnly, Category = "View")
-	USpringArmComponent* CameraBoom;
-
-	/** Camera used as the player view. */
-	UPROPERTY(VisibleDefaultsOnly, Category = "View")
-	UCameraComponent* ViewCamera;
-	
-	/*****************************************************************************/
-	/**									Input									 */
-	/*************************************************************************** */
-
 	/** Mapping context added to the local player for gameplay input. */
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	UInputMappingContext* GameplayInputMappingContext;
@@ -108,4 +110,23 @@ private:
 	/** Input actions mapped to gameplay ability input IDs. */
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TMap<ECAbilityInputID, UInputAction*> GameplayAbilityInputActions;
+	
+	/*****************************************************************************/
+	/**								Death and Respawn   						 */
+	/*************************************************************************** */
+	
+private:
+	/**
+	 * @brief Called when the player character dies.
+	 *
+	 * Disables player input.
+	 */
+	virtual void OnDead() override;
+	
+	/**
+	 * @brief Called when the player character respawns.
+	 *
+	 * Re-enables player input.
+	 */
+	virtual void OnRespawn() override;
 };
