@@ -74,7 +74,7 @@ void UComboGameplayAbility::ComboChangeEventReceived(FGameplayEventData Data)
 
 void UComboGameplayAbility::DoDamage(FGameplayEventData Data)
 {
-	TArray<FHitResult> HitResults = GetHitResultsFromSweepLocationTargetData(Data.TargetData, TargetSweepSphereRadius, false, true);
+	TArray<FHitResult> HitResults = GetHitResultsFromSweepLocationTargetData(Data.TargetData, TargetSweepSphereRadius);
 	
 	for (const FHitResult& HitResult : HitResults)
 	{

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
 #include "GameFramework/Character.h"
+#include "GenericTeamAgentInterface.h"
 #include "CCharacter.generated.h"
 
 struct FGameplayTag;
@@ -13,13 +14,15 @@ class UCAttributeSet;
 class UCAbilitySystemComponent;
 
 UCLASS()
-class CRUNCH_API ACCharacter : public ACharacter, public IAbilitySystemInterface
+class CRUNCH_API ACCharacter : public ACharacter, public IAbilitySystemInterface, public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 
 public:
 	ACCharacter();
 
+	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
+	
 	/**
 	 * @brief Initializes ability actor info, applies initial effects, and grants initial abilities on the server.
 	 */
@@ -195,4 +198,18 @@ private:
 	/** Squared distance threshold used to hide the overhead status gauge. */
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	float HeadStatGaugeVisibilityRangeSquared = 10000000.f;
+	
+	/*****************************************************************************/
+	/**								     Team							         */
+	/*************************************************************************** */
+public:
+	/** Assigns Team Agent to given TeamID */
+	virtual void SetGenericTeamId(const FGenericTeamId& NewTeamID) override; 
+	
+	/** Retrieve team identifier in form of FGenericTeamId */
+	virtual FGenericTeamId GetGenericTeamId() const override { return TeamID; }
+	
+private:
+	UPROPERTY(Replicated)
+	FGenericTeamId TeamID;
 };

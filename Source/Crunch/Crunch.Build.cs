@@ -12,7 +12,7 @@ public class Crunch : ModuleRules
 
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{
-			"GameplayAbilities", "GameplayTasks", "GameplayTags", "UMG", "Slate", "SlateCore" 
+			"GameplayAbilities", "GameplayTasks", "GameplayTags", "UMG", "Slate", "SlateCore", "AIModule"
 		});
 		
 		// Uncomment if you are using online features

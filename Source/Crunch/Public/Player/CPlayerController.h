@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "GenericTeamAgentInterface.h"
 #include "CPlayerController.generated.h"
 
 class UGameplayWidget;
 class ACPlayerCharacter;
 
 UCLASS()
-class CRUNCH_API ACPlayerController : public APlayerController
+class CRUNCH_API ACPlayerController : public APlayerController, public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 	
 public:
-
 	/**
 	 * @brief Called on the server when this controller possesses a pawn.
 	 * @param NewPawn Pawn possessed by this controller.
@@ -31,15 +31,21 @@ public:
 	 */
 	virtual void AcknowledgePossession(APawn* NewPawn) override;
 	
+	/** Assigns Team Agent to given TeamID */
+	virtual void SetGenericTeamId(const FGenericTeamId& NewTeamID) override;
+	
+	/** Retrieve team identifier in form of FGenericTeamId */
+	virtual FGenericTeamId GetGenericTeamId() const override { return TeamID; };
+	
+	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
+	
 private:
-
 	/**
 	 * @brief Creates and adds the gameplay widget to the local player's viewport.
 	 */
 	void SpawnGameplayWidget();
 	
 private:
-
 	/** Cached player character possessed by this controller. */
 	UPROPERTY()
 	ACPlayerCharacter* CPlayerCharacter;
@@ -51,4 +57,7 @@ private:
 	/** Runtime gameplay widget instance added to the viewport. */
 	UPROPERTY()
 	UGameplayWidget* GameplayWidget;
+	
+	UPROPERTY(Replicated)
+	FGenericTeamId TeamID;
 };

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/GameplayAbility.h"
+#include "GenericTeamAgentInterface.h"
 #include "CGameplayAbility.generated.h"
 
 UCLASS()
@@ -26,13 +27,15 @@ protected:
 	 *
 	 * @param TargetDataHandle Target data handle containing sweep start and end locations.
 	 * @param SphereSweepRadius Radius used for the sphere sweep trace.
+	 * @param TargetTeam
 	 * @param bDrawDebug If true, draws debug traces for the sweep.
 	 * @param bIgnoreSelf If true, ignores the owning avatar actor during the trace.
 	 * @return Array of hit results gathered from all sphere sweep traces.
 	 */
 	TArray<FHitResult> GetHitResultsFromSweepLocationTargetData(
 		const FGameplayAbilityTargetDataHandle& TargetDataHandle, 
-		float SphereSweepRadius = 30.f, 
+		float SphereSweepRadius = 30.f,
+		ETeamAttitude::Type TargetTeam = ETeamAttitude::Hostile,
 		bool bDrawDebug = false, 
 		bool bIgnoreSelf = true
 	) const;

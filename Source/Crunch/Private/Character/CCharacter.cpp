@@ -10,7 +10,15 @@
 #include "GAS/CAbilitySystemStatics.h"
 #include "GAS/Attributes/CAttributeSet.h"
 #include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 #include "Widgets/OverHeadStatsGauge.h"
+
+void ACCharacter::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	
+	DOREPLIFETIME(ACCharacter, TeamID);
+}
 
 ACCharacter::ACCharacter()
 {
@@ -123,6 +131,14 @@ void ACCharacter::Respawn()
 	
 	SetStatusGaugeEnabled(true);
 	
+	if (HasAuthority() && GetController())
+	{
+		if (const TWeakObjectPtr<AActor> StartSpot = GetController()->StartSpot; StartSpot.IsValid())
+		{
+			SetActorTransform(StartSpot->GetActorTransform());
+		}
+	}
+	
 	if (CAbilitySystemComponent)
 	{
 		CAbilitySystemComponent->ApplyFullStatEffect();
@@ -221,4 +237,10 @@ void ACCharacter::PossessedBy(AController* NewController)
 UAbilitySystemComponent* ACCharacter::GetAbilitySystemComponent() const
 {
 	return CAbilitySystemComponent;
+}
+
+void ACCharacter::SetGenericTeamId(const FGenericTeamId& NewTeamID)
+{
+	IGenericTeamAgentInterface::SetGenericTeamId(NewTeamID);
+	TeamID = NewTeamID;
 }
