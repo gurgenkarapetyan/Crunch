@@ -8,6 +8,7 @@
 #include "GenericTeamAgentInterface.h"
 #include "CCharacter.generated.h"
 
+class UAIPerceptionStimuliSourceComponent;
 struct FGameplayTag;
 class UWidgetComponent;
 class UCAttributeSet;
@@ -212,4 +213,11 @@ public:
 private:
 	UPROPERTY(Replicated)
 	FGenericTeamId TeamID;
+	
+	/*****************************************************************************/
+	/**								     AI							             */
+	/*************************************************************************** */
+private:
+	UPROPERTY()
+	UAIPerceptionStimuliSourceComponent* PerceptionStimuliSourceComponent;
 };

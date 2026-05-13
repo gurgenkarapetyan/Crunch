@@ -11,6 +11,8 @@
 #include "GAS/Attributes/CAttributeSet.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
+#include "Perception/AISense_Sight.h"
 #include "Widgets/OverHeadStatsGauge.h"
 
 void ACCharacter::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
@@ -31,6 +33,8 @@ ACCharacter::ACCharacter()
 	OverHeadWidgetComponent->SetupAttachment(GetRootComponent());
 	
 	BindGASChangeDelegate();
+	
+	PerceptionStimuliSourceComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(FName("Perception Stimuli Source Component"));
 }
 
 void ACCharacter::BindGASChangeDelegate()
@@ -168,6 +172,8 @@ void ACCharacter::BeginPlay()
 	
 	ConfigureOverHeadStatusWidget();
 	MeshRelativeTransform = GetMesh()->GetRelativeTransform();
+	
+	PerceptionStimuliSourceComponent->RegisterForSense(UAISense_Sight::StaticClass());
 }
 
 void ACCharacter::ConfigureOverHeadStatusWidget()
