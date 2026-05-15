@@ -66,6 +66,8 @@ private:
 	 */
 	AActor* GetNextPerceivedActor() const;
 	
+	void ForgetActorIfDead(AActor* ActorToForget) const;
+	
 private:
 	/** Behavior tree executed by this AI controller. */
 	UPROPERTY(EditDefaultsOnly, Category = "AI Behavior")
