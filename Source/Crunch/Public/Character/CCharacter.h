@@ -211,8 +211,11 @@ public:
 	virtual FGenericTeamId GetGenericTeamId() const override { return TeamID; }
 	
 private:
-	UPROPERTY(Replicated)
+	UPROPERTY(ReplicatedUsing = OnRep_TeamID)
 	FGenericTeamId TeamID;
+	
+	UFUNCTION()
+	virtual void OnRep_TeamID() { /** override in child class */ };
 	
 	/*****************************************************************************/
 	/**								     AI							             */

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
-#include "BehaviorTree/BlackboardComponent.h"
+#include "GameplayTagContainer.h"
 #include "CAIController.generated.h"
 
 struct FAIStimulus;
@@ -66,7 +66,32 @@ private:
 	 */
 	AActor* GetNextPerceivedActor() const;
 	
+	/**
+	 * @brief Forces perception to forget an actor if it is marked as dead.
+	 *
+	 * @param ActorToForget Actor that may be removed from perception memory.
+	 */
 	void ForgetActorIfDead(AActor* ActorToForget) const;
+	
+	/**
+	 * @brief Called when the controlled pawn dead gameplay tag changes.
+	 *
+	 * Stops AI logic and disables senses while dead, then restores them on respawn.
+	 *
+	 * @param Tag Gameplay tag that changed.
+	 * @param Count New active tag count.
+	 */
+	void PawnDeadTagUpdate(const FGameplayTag Tag, const int32 Count);
+	
+	/**
+	 * @brief Clears perception data, disables all senses, and clears the current target.
+	 */
+	void ClearAndDisableAllSenses();
+	
+	/**
+	 * @brief Re-enables all configured AI perception senses.
+	 */
+	void EnableAllSenses();
 	
 private:
 	/** Behavior tree executed by this AI controller. */

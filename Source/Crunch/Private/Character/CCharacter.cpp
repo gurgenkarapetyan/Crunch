@@ -60,6 +60,12 @@ void ACCharacter::DeathTagUpdated(const FGameplayTag Tag, int32 NewCount)
 void ACCharacter::StartDeathSequence()
 {
 	OnDead();
+	
+	if (CAbilitySystemComponent)
+	{
+		CAbilitySystemComponent->CancelAllAbilities();
+	}
+	
 	PlayDeathAnimation();
 	SetStatusGaugeEnabled(false);
 	
