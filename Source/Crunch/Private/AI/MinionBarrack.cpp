@@ -86,6 +86,7 @@ void AMinionBarrack::SpawnNewMinions(const int Amount)
 		);
 		NewMinion->SetGenericTeamId(BarrackTeamID);
 		NewMinion->FinishSpawning(SpawnTransform);
+		NewMinion->SetGoal(Goal);
 		MinionPool.Add(NewMinion);
 	}
 }

@@ -95,7 +95,10 @@ void ACCharacter::PlayDeathAnimation()
 
 void ACCharacter::DeathMontageFinished() const
 {
-	SetRagdollEnabled(true);
+	if (IsDead())
+	{
+		SetRagdollEnabled(true);
+	}
 }
 
 void ACCharacter::SetRagdollEnabled(const bool bIsEnabled) const
@@ -161,6 +164,14 @@ void ACCharacter::Respawn()
 
 void ACCharacter::OnRespawn()
 {
+}
+
+void ACCharacter::RespawnImmediately() const
+{
+	if (HasAuthority())
+	{
+		GetAbilitySystemComponent()->RemoveActiveEffectsWithGrantedTags(FGameplayTagContainer(UCAbilitySystemStatics::GetDeadStatTag()));
+	}
 }
 
 void ACCharacter::ServerSideInit()

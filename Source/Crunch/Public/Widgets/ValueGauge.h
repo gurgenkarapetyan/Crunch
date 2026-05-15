@@ -54,7 +54,6 @@ private:
 	void MaxValueChanged(const FOnAttributeChangeData& ChangeData);
 	
 private:
-
 	/** Cached current value displayed by the gauge. */
 	float CachedValue;
 
@@ -65,6 +64,15 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Visual")
 	FLinearColor BarColor;
 
+	UPROPERTY(EditAnywhere, Category = "Visual")
+	FSlateFontInfo ValueTextFont;
+	
+	UPROPERTY(EditAnywhere, Category = "Visual")
+	bool bValueTextVisible = true;
+	
+	UPROPERTY(EditAnywhere, Category = "Visual")
+	bool bProgressBarVisible = true;
+	
 	/** Progress bar used to display the current value percentage. */
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	UProgressBar* ProgressBar;

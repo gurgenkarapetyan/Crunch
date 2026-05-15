@@ -3,11 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystemComponent.h"
 #include "AbilitySystemInterface.h"
 #include "GameFramework/Character.h"
 #include "GenericTeamAgentInterface.h"
+#include "GAS/CAbilitySystemStatics.h"
 #include "CCharacter.generated.h"
 
+class UCAbilitySystemStatics;
 class UAIPerceptionStimuliSourceComponent;
 struct FGameplayTag;
 class UWidgetComponent;
@@ -90,6 +93,17 @@ public:
 	 * Intended to be overridden by child classes for custom respawn behavior.
 	 */
 	virtual void OnRespawn();
+	
+	/**
+	 * @brief Immediately removes the dead state from this character on the authority.
+	 */
+	void RespawnImmediately() const;
+	
+	/**
+	 * @brief Returns whether this character currently has the dead gameplay tag.
+	 * @return True if the character is dead.
+	 */
+	bool IsDead() const { return GetAbilitySystemComponent()->HasMatchingGameplayTag(UCAbilitySystemStatics::GetDeadStatTag()); } 
 	
 private:
 	/**
@@ -211,9 +225,15 @@ public:
 	virtual FGenericTeamId GetGenericTeamId() const override { return TeamID; }
 	
 private:
+	/** Replicated team identifier used by AI perception and team-based logic. */
 	UPROPERTY(ReplicatedUsing = OnRep_TeamID)
 	FGenericTeamId TeamID;
 	
+	/**
+	 * @brief Called when TeamID is replicated.
+	 *
+	 * Intended to be overridden by child classes that need to react to team changes.
+	 */
 	UFUNCTION()
 	virtual void OnRep_TeamID() { /** override in child class */ };
 	
@@ -221,8 +241,13 @@ private:
 	/**								     AI							             */
 	/*************************************************************************** */
 private:
+	/**
+	 * @brief Enables or disables this character as an AI perception stimulus source.
+	 * @param bIsEnabled True to register with perception, false to unregister.
+	 */
 	void SetAIPerceptionStimuliSourceEnabled(bool bIsEnabled);
 	
+	/** Component that allows this character to be detected by AI perception. */
 	UPROPERTY()
 	UAIPerceptionStimuliSourceComponent* PerceptionStimuliSourceComponent;
 };
