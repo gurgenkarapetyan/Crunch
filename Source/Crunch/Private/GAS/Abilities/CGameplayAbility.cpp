@@ -2,6 +2,10 @@
 
 
 #include "GAS/Abilities/CGameplayAbility.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
+#include "GameFramework/Character.h"
+#include "GAS/Abilities/GAP_Launched.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 UAnimInstance* UCGameplayAbility::GetOwnerAnimInstance() const
@@ -75,4 +79,57 @@ TArray<FHitResult> UCGameplayAbility::GetHitResultsFromSweepLocationTargetData(
 	}
 	
 	return OutResults;
+}
+
+void UCGameplayAbility::PushSelf(const FVector& PushVelocity)
+{
+	if (ACharacter* OwningAvatarCharacter = GetOwningAvatarCharacter())
+	{
+		OwningAvatarCharacter->LaunchCharacter(PushVelocity, true, true);
+	}
+}
+
+void UCGameplayAbility::PushTarget(AActor* Target, const FVector& PushVelocity)
+{
+	if (!Target)
+	{
+		return;
+	}
+	
+	FGameplayEventData EventData;
+	FGameplayAbilityTargetData_SingleTargetHit* HitData = new FGameplayAbilityTargetData_SingleTargetHit();
+	FHitResult HitResult;
+	HitResult.ImpactNormal = PushVelocity;
+	HitData->HitResult = HitResult;
+	EventData.TargetData.Add(HitData);
+	
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Target, UGAP_Launched::GetLaunchAbilityActivationTag(), EventData);
+}
+
+void UCGameplayAbility::ApplyGameplayEffectToHitResultActor(const FHitResult& HitResult, const TSubclassOf<UGameplayEffect> GameplayEffect, const int Level)
+{
+	const FGameplayEffectSpecHandle EffectSpecHandle = MakeOutgoingGameplayEffectSpec(GameplayEffect, Level);
+		
+	FGameplayEffectContextHandle EffectContext = MakeEffectContext(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo());
+	EffectContext.AddHitResult(HitResult);
+		
+	EffectSpecHandle.Data->SetContext(EffectContext);
+		
+	ApplyGameplayEffectSpecToTarget(
+		GetCurrentAbilitySpecHandle(), 
+		CurrentActorInfo, 
+		CurrentActivationInfo, 
+		EffectSpecHandle, 
+		UAbilitySystemBlueprintLibrary::AbilityTargetDataFromActor(HitResult.GetActor())
+	);
+}
+
+ACharacter* UCGameplayAbility::GetOwningAvatarCharacter()
+{
+	if (!AvatarCharacter)
+	{
+		AvatarCharacter = Cast<ACharacter>(GetAvatarActorFromActorInfo());
+	}
+	
+	return AvatarCharacter;
 }

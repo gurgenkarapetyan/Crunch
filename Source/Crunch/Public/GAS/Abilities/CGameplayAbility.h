@@ -39,4 +39,53 @@ protected:
 		bool bDrawDebug = false, 
 		bool bIgnoreSelf = true
 	) const;
+	
+	/**
+	 * @brief Launches the owning avatar character using the specified velocity.
+	 *
+	 * @param PushVelocity Launch velocity applied to the owning character.
+	 */
+	void PushSelf(const FVector& PushVelocity);
+	
+	/**
+	 * @brief Sends a launch gameplay event to the specified target actor.
+	 *
+	 * @param Target Actor that receives the launch event.
+	 * @param PushVelocity Launch velocity encoded into the gameplay event.
+	 */
+	void PushTarget(AActor* Target, const FVector& PushVelocity);
+	
+	/**
+	 * @brief Applies a gameplay effect to the actor contained in the provided hit result.
+	 *
+	 * Adds the hit result to the gameplay effect context before application.
+	 *
+	 * @param HitResult Hit result containing the target actor.
+	 * @param GameplayEffect Gameplay effect class to apply.
+	 * @param Level Gameplay effect level.
+	 */
+	void ApplyGameplayEffectToHitResultActor(const FHitResult& HitResult, const TSubclassOf<UGameplayEffect> GameplayEffect, const int Level = 1);
+	
+	/**
+	 * @brief Returns whether debug traces should be drawn for this ability.
+	 * @return True if debug drawing is enabled.
+	 */
+	UFUNCTION()
+	FORCEINLINE bool ShouldDrawDebug() const { return bShouldDrawDebug; }
+	
+	/**
+	 * @brief Returns the owning avatar character.
+	 * 
+	 * @return Owning avatar character, or nullptr if unavailable.
+	 */
+	ACharacter* GetOwningAvatarCharacter();
+	
+private:
+	/** Enables debug drawing for gameplay ability traces and targeting helpers. */
+	UPROPERTY(EditDefaultsOnly, Category = "DEBUG")
+	bool bShouldDrawDebug = false;
+	
+	/** Cached owning avatar character. */
+	UPROPERTY()
+	ACharacter* AvatarCharacter;
 };

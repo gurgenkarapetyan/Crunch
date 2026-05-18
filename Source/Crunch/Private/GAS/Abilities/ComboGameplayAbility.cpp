@@ -79,23 +79,7 @@ void UComboGameplayAbility::DoDamage(FGameplayEventData Data)
 	for (const FHitResult& HitResult : HitResults)
 	{
 		const TSubclassOf<UGameplayEffect> GameplayEffect = GetGameplayEffectForCurrentCombo();
-		const FGameplayEffectSpecHandle EffectSpecHandle = MakeOutgoingGameplayEffectSpec(
-			GameplayEffect, 
-			GetAbilityLevel(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo())
-		);
-		
-		FGameplayEffectContextHandle EffectContext = MakeEffectContext(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo());
-		EffectContext.AddHitResult(HitResult);
-		
-		EffectSpecHandle.Data->SetContext(EffectContext);
-		
-		ApplyGameplayEffectSpecToTarget(
-			GetCurrentAbilitySpecHandle(), 
-			CurrentActorInfo, 
-			CurrentActivationInfo, 
-			EffectSpecHandle, 
-			UAbilitySystemBlueprintLibrary::AbilityTargetDataFromActor(HitResult.GetActor())
-		);
+		ApplyGameplayEffectToHitResultActor(HitResult, GameplayEffect, GetAbilityLevel(CurrentSpecHandle, CurrentActorInfo));
 	}
 }
 
